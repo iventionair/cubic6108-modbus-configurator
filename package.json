@@ -1,0 +1,70 @@
+{
+  "name": "cubic6108-modbus-configurator",
+  "productName": "cubic6108-modbus-configurator",
+  "version": "0.0.2",
+  "description": "My Electron application description",
+  "main": "src/index.js",
+  "build": {
+    "appId": "com.jcklerk.cubic6108-modbus-configurator",
+    "productName": "Cubic Configurator"
+  },
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\"",
+    "watch": "npx tailwindcss -i main.css -o src/app.css --watch",
+    "build": "export CSC_IDENTITY_AUTO_DISCOVERY=false; electron-builder -mwl"
+  },
+  "keywords": [],
+  "author": {
+    "name": "jcklerk",
+    "email": "justin@klerk.nl"
+  },
+  "license": "MIT",
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "cubic6108_modbus_configurator"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0",
+    "scramjet": "^4.36.6",
+    "serialport": "^10.3.0",
+    "socket.io": "^4.4.1"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.63",
+    "@electron-forge/maker-deb": "^6.0.0-beta.63",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.63",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
+    "@electron-forge/maker-zip": "^6.0.0-beta.63",
+    "autoprefixer": "^10.4.4",
+    "electron": "17.1.2",
+    "electron-builder": "^22.14.13",
+    "tailwindcss": "^3.0.23"
+  }
+}
