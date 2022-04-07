@@ -1,3 +1,5 @@
+#build volder
+dist/
 # Logs
 logs
 *.log

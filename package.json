@@ -1,7 +1,7 @@
 {
   "name": "cubic6108-modbus-configurator",
   "productName": "cubic6108-modbus-configurator",
-  "version": "0.0.2",
+  "version": "v0.0.1-alpha",
   "description": "My Electron application description",
   "main": "src/index.js",
   "build": {
