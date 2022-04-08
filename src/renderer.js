@@ -138,6 +138,8 @@ function setId() {
 
     console.log("setId");
 
+    let currentId = parseInt(document.getElementById('currentId').value);
+
     let id = parseInt(document.getElementById('newId').value);
 
     if (id >= 0 && id <= 255) {
@@ -153,7 +155,7 @@ function setId() {
             getId();
         });
 
-        let hexcommand = "0106001100" + decToHex(id);
+        let hexcommand = decToHex(currentId) + "06001100" + decToHex(id);
         let cr16hexcommand = crc16(hexcommand);
         let buffercr16hexcommand = Buffer.from(cr16hexcommand, 'hex');
 
@@ -187,7 +189,6 @@ function setServer() {
         console.log(data)
         port.flush();
         port.close()
-        document.getElementById('currentId').value = data[3];
         checkCurrentId()
     });
 
@@ -210,7 +211,6 @@ function setWifi() {
         console.log(data)
         port.flush();
         port.close()
-        document.getElementById('currentId').value = data[3];
         checkCurrentId()
     });
 

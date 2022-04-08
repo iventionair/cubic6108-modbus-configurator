@@ -519,14 +519,16 @@ Ensure the default browser behavior of the `hidden` attribute.
   display: flex;
 }
 
-.h-4 {
-  height: 1rem;
+.contents {
+  display: contents;
 }
 
-.min-h-fit {
-  min-height: -webkit-fit-content;
-  min-height: -moz-fit-content;
-  min-height: fit-content;
+.hidden {
+  display: none;
+}
+
+.h-4 {
+  height: 1rem;
 }
 
 .w-full {
