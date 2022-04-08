@@ -1,7 +1,7 @@
 {
   "name": "cubic6108-modbus-configurator",
   "productName": "cubic6108-modbus-configurator",
-  "version": "v0.0.1-alpha",
+  "version": "v0.0.1-alpha-2",
   "description": "My Electron application description",
   "main": "src/index.js",
   "build": {
@@ -15,7 +15,8 @@
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
     "watch": "npx tailwindcss -i main.css -o src/app.css --watch",
-    "build": "export CSC_IDENTITY_AUTO_DISCOVERY=false; electron-builder -mwl"
+    "build:mac": "export CSC_IDENTITY_AUTO_DISCOVERY=false; electron-builder --mac",
+    "build:win": "electron-builder --win"
   },
   "keywords": [],
   "author": {
