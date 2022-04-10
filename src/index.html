@@ -10,7 +10,7 @@
 <body>
   <form style="height: 100%; min-height: 90vh" class="flex items-center flex-col my-auto bgimg bg-cover mt-6">
     <div class="flex flex-wrap -mx-3 mb-6">
-      <div class="w-full md:w-1/3 px-3">
+      <div class="w-full md:w-1/2 px-3">
         <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
           SerialPort
         </label>
@@ -25,18 +25,12 @@
           </div>
         </div>
       </div>
-      <div class="w-full md:w-1/3 px-3">
-        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-          Current ID
-        </label>
-        <input disabled onchange="checkCurrentId()" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="currentId" type="number" placeholder="?">
-      </div>
-      <div class="w-full md:w-1/3 px-3">
+      <div class="w-full md:w-1/2 px-3">
         <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
           <br>
         </label>
         <button class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onclick="getId()">
-          Get Id
+          Get Data
         </button>
       </div>
     </div>
@@ -45,6 +39,22 @@
     stuff in this class will be shown after we know the device id.
     -->
     <div hidden id="deviceSettings">
+      <pre class="bg-slate-900 rounded-md px-3 mb-6"><code class="language-json text-gray-400">
+        {
+          "deviceId": <span id="currentId"></span>,
+          "server": "<span id="ValueServer"></span>"
+          "wifiSSID": "<span id="ValueWifiSSID"></span>",
+          "wifiPassword": "<span id="ValueWifiPASSWD"></span>",
+          "pm10": <span id="ValuePM10"></span>,
+          "pm2.5": <span id="ValuePM25"></span>,
+          "pm1": <span id="ValuePM1"></span>,
+          "co2": <span id="ValueCO2"></span>,
+          "hum": <span id="ValueHUM"></span>,
+          "temp": <span id="ValueTEMP"></span>,
+          "tvoc": <span id="ValueTVOC"></span>
+        }
+    </code></pre>
+
       <div class="flex flex-wrap -mx-3 mb-6">
         <div class="w-full md:w-1/2 px-3">
           <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -100,12 +110,13 @@
           <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
             <br>
           </label>
-          <button class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onclick="setWifi()">
+          <button class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onclick="setWifiSSID()">
             Set Wifi settings.
           </button>
         </div>
       </div>
     </div>
+
   </form>
   <button class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onclick="location.reload()">
     Clear Page Settings

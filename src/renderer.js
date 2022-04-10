@@ -16,7 +16,6 @@ function compareArrays(array1, array2) {
     else
         return false
 }
-
 // serial port list function
 async function listSerialPorts() {
     await SerialPort.list().then((ports, err) => {
@@ -66,14 +65,13 @@ function listPorts() {
 }
 
 function checkCurrentId() {
-    let currentid = document.getElementById('currentId').value;
+    let currentid = document.getElementById('currentId').innerHTML;
     if (currentid === '') {
         document.getElementById('deviceSettings').setAttribute('hidden', 'true');
     } else {
         document.getElementById('deviceSettings').removeAttribute('hidden');
     }
 }
-
 // Set a timeout that will check for new serialPorts every 5 seconds.
 // This timeout reschedules itself.
 setTimeout(listPorts, 2000);
@@ -90,7 +88,6 @@ function decToHex(num){
 }
 
 function createSerialPort(){
-
     let port = new SerialPort({
             path: serialPortForm.value,
             baudRate: 9600,
@@ -103,7 +100,7 @@ function createSerialPort(){
     return port;
 }
 function createParser(port){
-    return port.pipe(new InterByteTimeoutParser({interval: 1000}));
+    return port.pipe(new InterByteTimeoutParser({interval: 50}));
 }
 function errorSerialPort(err){
     if (err) {
@@ -113,63 +110,119 @@ function errorSerialPort(err){
         document.getElementById('error').textContent = ''
     }
 }
-
+// get data
 function getId() {
-
     let port = createSerialPort();
-
     let parser = createParser(port);
-
     parser.on('data', (data) => {
         console.log(data)
         port.flush();
         port.close()
-        document.getElementById('currentId').value = data[3];
-        checkCurrentId()
+        document.getElementById('currentId').innerHTML = data[3];
+        getWifiSSID()
     });
-
     port.write(Buffer.from([0x11, 0x02, 0xAC, 0xFF, 0x42]), function (err) {
         errorSerialPort(err)
         console.log('message written')
     });
 }
+function getWifiSSID() {
+    let port = createSerialPort();
+    let parser = createParser(port);
+    parser.on('data', (data) => {
+        console.log(data.toString())
+        port.flush();
+        port.close()
+        document.getElementById('ValueWifiSSID').innerHTML = data.toString().replace('+ok=','');
+        getWifiPassword();
+    });
+    port.write("XFAT+WSSSID\r\n", function (err) {
+        errorSerialPort(err)
+        console.log('message written')
+    });
+}
 
+function getWifiPassword() {
+    let port = createSerialPort();
+    let parser = createParser(port);
+    parser.on('data', (data) => {
+        console.log(data.toString())
+        port.flush();
+        port.close()
+        document.getElementById('ValueWifiPASSWD').innerHTML = data.toString().replace('+ok=','');
+        getServer()
+    });
+    port.write("XFAT+WSKEY\r\n", function (err) {
+        errorSerialPort(err)
+        console.log('message written')
+    });
+}
+
+function getServer() {
+    let port = createSerialPort();
+    let parser = createParser(port);
+    parser.on('data', (data) => {
+        console.log(data.toString())
+        port.flush();
+        port.close();
+        document.getElementById('ValueServer').innerHTML = data.toString().replace('+ok=','');
+        getSensorData();
+    });
+    port.write("XFAT+NETP\r\n", function (err) {
+        errorSerialPort(err)
+        console.log('message written')
+    });
+}
+
+function getSensorData() {
+    let port = createSerialPort();
+    let parser = createParser(port);
+    let currentId = parseInt(document.getElementById('currentId').innerHTML);
+    parser.on('data', (data) => {
+        console.log(data)
+        port.flush();
+        port.close();
+        document.getElementById('ValuePM10').innerHTML = ((data[3] << 8 | data[4]));
+        document.getElementById('ValuePM25').innerHTML = ((data[5] << 8 | data[6]));
+        document.getElementById('ValuePM1').innerHTML = ((data[7] << 8 | data[8]));
+        document.getElementById('ValueCO2').innerHTML = ((data[9] << 8 | data[10]));
+        document.getElementById('ValueHUM').innerHTML = ((data[15] << 8 | data[16])) / 10;
+        document.getElementById('ValueTEMP').innerHTML = ((data[13] << 8 | data[14])) / 10;
+        document.getElementById('ValueTVOC').innerHTML = data[12];
+        checkCurrentId()
+    });
+    port.write(Buffer.from(crc16(decToHex(currentId) + "04000A0007"), 'hex'), function (err) {
+        errorSerialPort(err)
+        console.log('message written')
+    });
+}
+
+// set data
 function setId() {
-
     console.log("setId");
-
-    let currentId = parseInt(document.getElementById('currentId').value);
-
+    let currentId = parseInt(document.getElementById('currentId').innerHTML);
     let id = parseInt(document.getElementById('newId').value);
-
     if (id >= 0 && id <= 255) {
-
         let port = createSerialPort();
-
         let parser = createParser(port);
-
         parser.on('data', (data) => {
-            console.log(data)
+            console.log(data.toString())
             port.flush();
             port.close();
             getId();
         });
-
         let hexcommand = decToHex(currentId) + "06001100" + decToHex(id);
         let cr16hexcommand = crc16(hexcommand);
         let buffercr16hexcommand = Buffer.from(cr16hexcommand, 'hex');
-
         console.log(hexcommand);
         console.log("");
         console.log(cr16hexcommand);
         console.log("");
         console.log(buffercr16hexcommand);
-
         port.write(buffercr16hexcommand, function (err) {
             errorSerialPort(err)
             console.log('message written')
         });
-
     } else {
         document.getElementById('error').textContent = 'Please enter a new ID'
         return
@@ -177,48 +230,48 @@ function setId() {
 }
 
 function setServer() {
-
     let port = createSerialPort();
-
     let parser = createParser(port);
-
     let serverPort = document.getElementById('serverPort').value;
     let serverIP = document.getElementById('serverIp').value
-
     parser.on('data', (data) => {
-        console.log(data)
+        console.log(data.toString())
         port.flush();
         port.close()
-        checkCurrentId()
+        getId()
     });
-
     port.write("XFAT+NETP=TCP,CLIENT," + serverPort + "," + serverIP + "\r\n", function (err) {
         errorSerialPort(err)
         console.log('message written')
     });
 }
 
-function setWifi() {
-
+function setWifiSSID() {
     let port = createSerialPort();
-
     let parser = createParser(port);
-
     let wifiSSID = document.getElementById('wifiSSID').value;
-    let wifiPassword = document.getElementById('wifiPassword').value
-
     parser.on('data', (data) => {
-        console.log(data)
+        console.log(data.toString())
         port.flush();
         port.close()
-        checkCurrentId()
+        setWifiPassword();
     });
-
     port.write("XFAT+WSSSID=" + wifiSSID + "\r\n", function (err) {
         errorSerialPort(err)
         console.log('message written')
     });
-    port.write("XFAT+WSKEY=WPA2PSK,AES," + wifiPassword + "\\r\\n", function (err) {
+}
+function setWifiPassword() {
+    let port = createSerialPort();
+    let parser = createParser(port);
+    let wifiPassword = document.getElementById('wifiPassword').value
+    parser.on('data', (data) => {
+        console.log(data.toString())
+        port.flush();
+        port.close()
+        getId();
+    });
+    port.write("XFAT+WSKEY=WPA2PSK,AES," + wifiPassword + "\r\n", function (err) {
         errorSerialPort(err)
         console.log('message written')
     });
@@ -302,21 +355,14 @@ function crc16(data) {
             if (this.CleanString(inputType)) {
                 crcinputcrc16modbus=this.CRC16Modbus().toString(16).toUpperCase().padStart(4,"0");
                 crcinputcrc16modbus=crcinputcrc16modbus.substr(2) + crcinputcrc16modbus.substr(0, 2); //swap bytes
-
             }
         }
     };
-
     CRCMaster.init();
-
     var inputType = "HEX";
     var crcinputcrc16modbus;
     var crcinput = data;
-
     CRCMaster.Calculate(crcinput, inputType);
-
     var check = crcinput + crcinputcrc16modbus;
-
     return check;
 }
-
