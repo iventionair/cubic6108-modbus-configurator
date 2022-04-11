@@ -1,24 +1,8 @@
 const {app, BrowserWindow} = require('electron');
 const path = require('path');
 const {ipcMain} = require('electron');
-const {SerialPort, ReadlineParser, SerialPortMock} = require('serialport')
+//const {SerialPort, ReadlineParser, SerialPortMock} = require('serialport')
 
-const port = new SerialPort({
-        path: "/dev/tty.usbserial-FT5O13M8",
-        baudRate: 6900,
-        dataBits: 8,
-        parity: 'none',
-        stopBits: 1,
-        autoOpen: true,
-    }
-);
-
-port.on('data', function(msgout) {
-    console.log(msgout);
-});
-port.on('closed', function() {
-    console.log("not-connected");
-});
 
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -48,16 +32,6 @@ const createWindow = () => {
     // ipcMain.on('submitForm', function(event, data) {
     //    // Access form data here
     // });
-
-    port.on('ready', function() {
-        console.log("connected");
-        port.write(Buffer.from([0x11, 0x02, 0xAC, 0xFF, 0x42]), function(err) {
-            if (err) {
-                return console.log('Error on write: ', err.message);
-            }
-            console.log('message written');
-        });
-    });
 
 };
 
