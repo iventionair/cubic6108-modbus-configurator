@@ -182,9 +182,9 @@ function getSensorData() {
         console.log(data)
         port.flush();
         port.close();
-        document.getElementById('ValuePM10').innerHTML = ((data[3] << 8 | data[4]));
+        document.getElementById('ValuePM10').innerHTML = ((data[7] << 8 | data[8]));
         document.getElementById('ValuePM25').innerHTML = ((data[5] << 8 | data[6]));
-        document.getElementById('ValuePM1').innerHTML = ((data[7] << 8 | data[8]));
+        document.getElementById('ValuePM1').innerHTML = ((data[3] << 8 | data[4]));
         document.getElementById('ValueCO2').innerHTML = ((data[9] << 8 | data[10]));
         document.getElementById('ValueHUM').innerHTML = ((data[15] << 8 | data[16])) / 10;
         document.getElementById('ValueTEMP').innerHTML = ((data[13] << 8 | data[14])) / 10;
